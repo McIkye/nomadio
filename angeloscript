@@ -1,0 +1,108 @@
+#!/usr/local/bin/bash
+
+# Check that filename is given as first argument
+if [ ! -f "$1" -o ! -s "$1" ];
+then
+    echo "Must give valid filename containing MP3 file list as first argument."
+    exit
+fi
+
+mp3list=$1
+
+# XXX Delete everything on device
+
+# XXX Detect automatically using nomadio -m
+# Numbers in KB
+internal=262144
+external=131072
+already_internal=1741
+already_external=3175
+
+# How many songs ?
+linecount=`wc -l < $mp3list`
+
+# Number of retries for smaller filesize
+retry_reset=20
+
+# Start with internal memory
+slot=0
+current=$((internal-already_internal))
+retry=$retry_reset
+where=internal
+total_filelist=""
+filelist=""
+filecount=0
+
+while [ $retry -ne 0 ];
+do
+	filename=`random $linecount < $mp3list | head -1`
+	if [ "XX$filename" == "XX" ];
+	then
+		continue;
+	fi
+	filesize=`du -sk $filename | cut -f 1`
+	provisional=$((current-filesize))
+	if [ $provisional -le 0 ];
+	then
+		retry=$((retry-1))
+	else
+		# Verify that we don't already have the file
+		foo=`echo $total_filelist | grep $filename`
+		if [ "XX$foo" != "XX" ];
+		then
+		    continue;
+		fi
+		retry=$retry_reset
+		current=$provisional
+		nice_filename=`basename $filename`
+		echo "Will load $nice_filename ($filesize KB) to $where memory."
+		filelist="$filelist $filename"
+		total_filelist="$total_filelist $filename"
+		filecount=$((filecount+1))
+	fi
+done
+
+echo "Loading $filecount files to $where memory, $current KB left."
+time nomadio -w $slot $filelist
+
+# External memory now
+slot=1
+current=$((external-already_external))
+retry=$retry_reset
+where=external
+total_filelist=$filelist
+filelist=""
+filecount=0
+
+while [ $retry -ne 0 ];
+do
+	filename=`random $linecount < $mp3list | head -1`
+	if [ "XX$filename" == "XX" ];
+	then
+		continue;
+	fi
+	filesize=`du -sk $filename | cut -f 1`
+	provisional=$((current-filesize))
+	if [ $provisional -le 0 ];
+	then
+		retry=$((retry-1))
+	else
+		# Verify that we don't already have the file
+		foo=`echo $total_filelist | grep $filename`
+		if [ "XX$foo" != "XX" ];
+		then
+		    continue;
+		fi
+		retry=$retry_reset
+		current=$provisional
+		nice_filename=`basename $filename`
+		echo "Will load $nice_filename ($filesize KB) to $where memory."
+		filelist="$filelist $filename"
+		total_filelist="$total_filelist $filename"
+		filecount=$((filecount+1))
+	fi
+done
+
+echo "Loading $filecount files to $where memory, $current KB left."
+time nomadio -w $slot $filelist
+

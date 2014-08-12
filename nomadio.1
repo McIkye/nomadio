@@ -1,0 +1,176 @@
+.\" $NOWHERE: nomadio.1,v 1.6 2002/03/31 08:04:06 mickey Exp $
+.\"
+.\" Copyright (c) 2002 Michael Shalayeff
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+.\" IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+.\" OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+.\" IN NO EVENT SHALL THE AUTHOR OR HIS RELATIVES BE LIABLE FOR ANY DIRECT,
+.\" INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+.\" (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+.\" SERVICES; LOSS OF MIND, USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+.\" STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+.\" IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+.\" THE POSSIBILITY OF SUCH DAMAGE.
+.\"
+.Dd January 16, 2002
+.Dt NOMADIO 1
+.Os
+.Sh NAME
+.Nm nomadio
+.Nd Creative Labs NOMAD II MG IO utility
+.Sh SYNOPSIS
+.Nm nomadio
+.Op Fl f Ar device
+.Op Fl cilmnor
+.Op Fl R Ar <num>:<num>.<num>
+.Op Fl O Ar <owner>
+.Nm nomadio
+.Op Fl f Ar device
+.Op Fl cilmnor
+.Op Fl F Ar <num>
+.Nm nomadio
+.Op Fl f Ar device
+.Op Fl cilmnor
+.Op Fl C Ar yy/mm/dd hh:mm:ss
+.Nm nomadio
+.Op Fl f Ar device
+.Op Fl cilmnor
+.Op Fl d Ar <num>[:<num>
+.Nm nomadio
+.Op Fl f Ar device
+.Op Fl cilmnor
+.Op Fl g Ar <num>[:<num>]
+.Nm nomadio
+.Op Fl f Ar device
+.Op Fl cilmnor
+.Op Fl w Ar <num> <file> <file> ...
+.Sh DESCRIPTION
+This utility allows to modify the properties, set up the parameters
+and transfer the files on and of the
+.Dq Creative Labs NOMAD II MG
+.Tn MP3
+portable player.
+.Pp
+Basic functions include:
+.Bl -tag -width -offset indent -compact
+.It Examine the model and firmware version.
+.It Examine the memory usage/totals.
+.It Examine and modify the Dq owner .
+.It Examine and modify internal clock.
+.It Examine and modify FM radio presets.
+.It Format the memory devices.
+.It Upload the files.
+.It Download the files.
+.It Erase the files.
+.El
+.Pp
+Where required file on any of the memory devices is referred as
+.Ar <num>[:<num>] ,
+where fist number indexes the memory device (either 0 for internal or
+1 for the
+.Tn SmartMedia
+card) and the second -- the file whithin that device.
+Whether only one number given it is the file index and
+the memory device is assumed to be the internal one.
+.Pp
+Here is the list of suppported options:
+.Bl -tag -width Ds
+.It Fl c
+Diplay current clock.
+.It Fl C Ar "yy/mm/dd hh:mm:ss"
+Set clock to the time specified or a special string
+.Ar now
+can be used to set to the local time from the system.
+.It Fl d Ar <num>[:<num>]
+Delete the file specified from the memory on the
+.Tn NOMAD .
+.It Fl F Ar <num>
+Format the specified by the
+.Ar <num>
+memory device, confirmation will be made.
+.It Fl f Ar device
+Use alternative device name with the default being
+.Dq /dev/ugen0 .
+.It Fl g Ar <num>[:<num>]
+Retrieve the file specified from the memory of the
+.Tn NOMAD .
+.It Fl i
+Display model and firmware version.
+.It Fl l
+List the files from both internal and
+.Tn SmartMedia
+memory devices of the
+.Tn NOMAD .
+.It Fl m
+Display memory totals, both internal and removable, if present,
+is accounted for used and total numbers.
+.It Fl n
+Do not display labels when printing infos from
+.Fl cimo .
+.It Fl o
+Display the
+.Dq owner
+string.
+.It Fl O Ar string
+Set the
+.Dq owner
+string.
+.It Fl r
+Display the FM radio presets.
+.It Fl R Ar <num>:<num>.<num>
+Modify the FM radio preset. The number before the colon specifies
+the preset index to be changed and the rest being frequency
+in MHz to set it onto. Some basic validity checks are done.
+.It Fl t Ar timeout
+Use this timeout for
+.Tn USB
+transactions.
+.It Fl w Ar <num> <file> <file> ...
+Put the files specified onto the memory device selected on the
+.Tn NOMAD .
+.El
+.Sh FILES
+.Bl -tag -width /dev/ugen0.00 -compact
+.It Pa /dev/ugen0.00
+.It Pa /dev/ugen0.01
+.It Pa /dev/ugen0.02
+.El
+.Sh SEE ALSO
+.Xr rcsintro 1 ,
+.Xr ugen 4 ,
+.Xr usb 4 ,
+.Xr MAKEDEV 8
+.Sh AUTHORS
+This utility was written for
+.Ox
+by
+.An Noma Dio Aq nomadio@lucifier.net
+.Sh HISTORY
+This utility was written on the virge of the year 2002 and
+based upon multiple sources by the following people:
+.Bl -tag -width aaa -compact
+.It An Gabriel Gomiz Aq gomita@bblanca.com.ar
+.It An Chris Hanson Aq cph@zurich.ai.mit.edu
+.It An Justin Gatz
+.El
+.Sh BUGS
+This utility may accidentaly operate
+.Tn NOMAD II
+players, not only the 
+.Nm MG
+versions.
+.Pp
+No way is known to date to change the equalizer presets,
+perform FM radio autoscan or remotely control the player.
